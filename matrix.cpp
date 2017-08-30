@@ -2,12 +2,12 @@
 // Created by Simon Moos on 2017-08-30.
 //
 
-#include "pattern.h"
+#include "matrix.h"
 
 #include <cassert>
 #include <iostream>
 
-Pattern::Pattern(const size_t width, const size_t height, const std::initializer_list<int>& pattern)
+Matrix::Matrix(const size_t width, const size_t height, const std::initializer_list<int>& pattern)
     : width(width)
     , height(height)
     , num_neurons(width * height)
@@ -22,7 +22,7 @@ Pattern::Pattern(const size_t width, const size_t height, const std::initializer
 }
 
 void
-Pattern::debug_print(bool transform_values) const
+Matrix::debug_print(bool transform_values) const
 {
     for (size_t i = 0; i < height; ++i) {
         for (size_t j = 0; j < width; ++j) {
@@ -35,21 +35,21 @@ Pattern::debug_print(bool transform_values) const
 }
 
 int
-Pattern::get_linear(size_t i) const
+Matrix::get_linear(size_t i) const
 {
     assert(i >= 0 && i < num_neurons);
     return state[i];
 }
 
 void
-Pattern::set_linear(size_t i, int value)
+Matrix::set_linear(size_t i, int value)
 {
     assert(i >= 0 && i < num_neurons);
     state[i] = value;
 }
 
 int
-Pattern::get(size_t i, size_t j) const
+Matrix::get(size_t i, size_t j) const
 {
     assert(i >= 0 && i < height);
     assert(j >= 0 && j < width);
@@ -57,7 +57,7 @@ Pattern::get(size_t i, size_t j) const
 }
 
 void
-Pattern::set(size_t i, size_t j, int value)
+Matrix::set(size_t i, size_t j, int value)
 {
     assert(i >= 0 && i < height);
     assert(j >= 0 && j < width);
@@ -65,7 +65,7 @@ Pattern::set(size_t i, size_t j, int value)
 }
 
 bool
-Pattern::operator==(const Pattern& other) const
+Matrix::operator==(const Matrix& other) const
 {
     if (this->num_neurons != other.num_neurons) return false;
     if (this->width  != other.width) return false;

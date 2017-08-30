@@ -1,14 +1,14 @@
 #include <iostream>
 
-#include "pattern.h"
+#include "matrix.h"
 
-float calculate_weight(const Pattern &pattern, size_t i, size_t j)
+float calculate_weight(const Matrix &pattern, size_t i, size_t j)
 {
     if (i == j) return 0.0f;
     return (1.0f / pattern.num_neurons) * pattern.get_linear(i) * pattern.get_linear(j);
 }
 
-void create_weight_matrix(std::vector<float> &weights, const Pattern &pattern)
+void create_weight_matrix(std::vector<float> &weights, const Matrix &pattern)
 {
     size_t weight_matrix_side = pattern.num_neurons;
     size_t weight_matrix_size = weight_matrix_side * weight_matrix_side;
@@ -27,7 +27,7 @@ int sgn(float x) {
     return (0 < x) - (x < 0);
 }
 
-void update_neuron(Pattern& pattern, const std::vector<float>& weights, size_t i)
+void update_neuron(Matrix& pattern, const std::vector<float>& weights, size_t i)
 {
     float h = 0.0f;
     for (size_t j = 0; j < pattern.num_neurons; ++j) {
@@ -45,7 +45,7 @@ int main()
 
     std::vector<float> weights;
 
-    Pattern pattern = Pattern(6, 9, {
+    Matrix pattern = Matrix(6, 9, {
             -1, -1, -1, -1, -1, -1,
             -1, +1, +1, +1, +1, -1,
             -1, +1, -1, -1, -1, -1,
@@ -56,7 +56,7 @@ int main()
             -1, +1, +1, +1, +1, -1,
             -1, -1, -1, -1, -1, -1
     });
-    Pattern current_state = Pattern(6, 9, {
+    Matrix current_state = Matrix(6, 9, {
             +1, -1, +1, -1, -1, -1,
             -1, +1, -1, +1, +1, -1,
             -1, +1, -1, -1, +1, -1,

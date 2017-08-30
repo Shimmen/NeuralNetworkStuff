@@ -8,12 +8,12 @@
 #include <vector>
 #include <initializer_list>
 
-class Pattern
+class Matrix
 {
 public:
 
-    Pattern(const size_t width, const size_t height, const std::initializer_list<int>& pattern);
-    ~Pattern() {}
+    Matrix(const size_t width, const size_t height, const std::initializer_list<int>& pattern);
+    ~Matrix() {}
 
     const size_t width;
     const size_t height;
@@ -27,7 +27,7 @@ public:
 
     void debug_print(bool transform_values = true) const;
 
-    bool operator==(const Pattern& other) const;
+    bool operator==(const Matrix& other) const;
 
 private:
 
