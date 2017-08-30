@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
-project(ConvergingPatterns)
+project(NeuralNetworkStuff)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.cpp matrix.h)
-add_executable(ConvergingPatterns ${SOURCE_FILES})
+add_subdirectory(converging_pattern)

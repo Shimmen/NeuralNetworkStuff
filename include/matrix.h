@@ -2,8 +2,8 @@
 // Created by Simon Moos on 2017-08-30.
 //
 
-#ifndef CONVERGINGPATTERNS_PATTERN_H
-#define CONVERGINGPATTERNS_PATTERN_H
+#ifndef NN_MATRIX_H
+#define NN_MATRIX_H
 
 #include <vector>
 #include <cassert>
@@ -126,4 +126,4 @@ operator==(const Matrix<T>& first, const Matrix<T>& second)
     return true;
 }
 
-#endif //CONVERGINGPATTERNS_PATTERN_H
+#endif // NN_MATRIX_H
