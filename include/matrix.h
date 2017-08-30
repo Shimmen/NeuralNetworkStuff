@@ -14,7 +14,7 @@ class Matrix
 {
 public:
 
-    Matrix(const size_t width, const size_t height, const std::initializer_list<T>& pattern);
+    Matrix(const size_t width, const size_t height, const std::initializer_list<T>& pattern = {});
     ~Matrix() {}
 
     const size_t width;
@@ -51,7 +51,9 @@ Matrix<T>::Matrix(const size_t width, const size_t height, const std::initialize
         , num_elements(width * height)
 {
     unsigned long size = static_cast<unsigned long>(width * height);
+
     if (pattern.size()) {
+        assert(pattern.size() == size);
         state.reserve(size);
         state.assign(pattern.begin(), pattern.end());
     } else {

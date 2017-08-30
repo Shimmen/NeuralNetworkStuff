@@ -13,7 +13,7 @@ WeightMatrix
 create_weight_matrix(const Pattern& pattern)
 {
     size_t weight_matrix_side = pattern.num_elements;
-    WeightMatrix weights(weight_matrix_side, weight_matrix_side, {});
+    WeightMatrix weights(weight_matrix_side, weight_matrix_side);
 
     for (size_t i = 0; i < weight_matrix_side; ++i)  {
         for (size_t j = 0; j < weight_matrix_side; ++j)  {
