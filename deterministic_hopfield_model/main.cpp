@@ -156,8 +156,9 @@ main()
         int num_incorrectly_flipped_bits = 0;
         for (size_t current_test = 0; current_test < BITS_TO_TEST_PER_P; ++current_test) {
 
-            // Pick random neuron to "update"
-            size_t i = std::rand() % N;
+            // Pick neuron to "update". Since the neurons aren't actually updated this is effectively
+            // implementing a synchronous update
+            size_t i = current_test % N;
 
             // Neuron should not be updated since we start with a stored pattern
             if (would_update_neuron(test_pattern, weights, i)) {
