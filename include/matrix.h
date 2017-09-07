@@ -14,7 +14,7 @@ class Matrix
 {
 public:
 
-    Matrix(const size_t width, const size_t height, const std::initializer_list<T>& pattern = {});
+    Matrix(const size_t width, const size_t height = 1, const std::initializer_list<T>& pattern = {});
     ~Matrix() {}
 
     const size_t width;
