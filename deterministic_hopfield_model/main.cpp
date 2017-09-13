@@ -57,12 +57,19 @@ create_weight_matrix(const std::vector<Pattern>& patterns, size_t num_bits)
 ///////////////////////////////////////////////
 // McCulloch-Pitts dynamic / update rule
 
+static size_t sgn_func_num_usages = 0;
+static size_t sgn_func_num_zeroes = 0;
+
 #define sgn(x) math_signum(x)
 
 int
 math_signum(double x) {
-    // TODO: Why do I get zero all the time now?!
-    //assert(x != 0); // (very unlikely)
+    sgn_func_num_usages += 1;
+    if (x == 0) {
+        sgn_func_num_zeroes += 1;
+    }
+
+    // Use >= instead of > and count how many times this happens
     int val = (x >= 0) - (x < 0);
     return val;
 }
@@ -207,6 +214,7 @@ main()
         p_error_vector.push_back(p_error);
     }
 
+    std::cout << "sgn(x = 0) occurred " << sgn_func_num_zeroes << " times for a total of " << sgn_func_num_usages << " usages." << std::endl;
     std::cout << "Done, plotting..." << std::endl;
 
     // Draw and show graph results
