@@ -17,9 +17,9 @@ public:
     Matrix(const size_t width, const size_t height = 1, const std::initializer_list<T>& pattern = {});
     ~Matrix() {}
 
-    const size_t width;
-    const size_t height;
-    const size_t num_elements;
+    size_t width;
+    size_t height;
+    size_t num_elements;
 
     T get_linear(size_t i) const;
     void set_linear(size_t i, T value);
@@ -38,7 +38,7 @@ private:
 ////////////////////////////
 
 typedef Matrix<int> Pattern;
-typedef Matrix<float> WeightMatrix;
+typedef Matrix<double> WeightMatrix;
 
 ////////////////////////////
 ////// Implementation //////
