@@ -5,6 +5,7 @@ project(NeuralNetworkStuff)
 add_subdirectory(converging_pattern)
 add_subdirectory(deterministic_hopfield_model)
 add_subdirectory(stochastic_hopfield_model)
+add_subdirectory(supervised_learning)
 
 # Etc. stuff
 add_subdirectory(plot_test)
