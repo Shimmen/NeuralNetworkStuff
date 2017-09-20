@@ -19,6 +19,7 @@ public:
 
     typedef double (*ActivationFunction)(double);
 
+    NeuralNetwork();
     NeuralNetwork(size_t num_inputs, size_t num_outputs, ActivationFunction activation_function, ActivationFunction activation_function_derivative);
     ~NeuralNetwork() {}
 

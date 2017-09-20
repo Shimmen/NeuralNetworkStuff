@@ -75,6 +75,29 @@ normalize_input_data(std::vector<Pattern>& data)
 }
 
 ///////////////////////////////////////////////
+// Utility
+
+double
+average_value(const std::vector<double>& list)
+{
+    double average = 0.0;
+    for (const auto& e: list) {
+        average += e;
+    }
+    return average / list.size();
+}
+
+double
+variance_of_data(const std::vector<double>& data, double mean)
+{
+    double nom_sum = 0.0;
+    for (size_t i = 0; i < data.size(); ++i) {
+        nom_sum += pow(data[i] - mean, 2);
+    }
+    return nom_sum / (data.size() - 1);
+}
+
+///////////////////////////////////////////////
 // Measuring etc.
 
 double
@@ -116,7 +139,6 @@ energy_for_data_set(const NeuralNetwork& network, const std::vector<Pattern>& da
         double actual_output = actual_output_vec[0];
 
         sum += pow(pattern.out - actual_output, 2);
-
     }
 
     return -1.0 / 2.0 * sum;
@@ -202,7 +224,9 @@ main()
     std::srand(static_cast<uint>(std::time(0)));
 
     // Test parameters
-    const size_t NUM_TRAINING_ITERATIONS = 10000;//1000000; // TODO: 10e6!
+    const size_t NUM_TESTS = 10;
+    const size_t NUM_TRAINING_ITERATIONS = 1000000;
+    const double LEARNING_RATE = 0.02;
 
     // Load and process data
     std::vector<Pattern> training_data = read_and_parse_data("supervised_learning/train_data.txt");
@@ -210,48 +234,78 @@ main()
     normalize_input_data(training_data);
     normalize_input_data(validation_data);
 
-    // Set up neural network
-    const double learning_rate = 0.02;
-    NeuralNetwork network = NeuralNetwork(2, 1, tanh_activation_function, tanh_activation_function_derivative);
-    network.reset_weights(-0.2, +0.2);
-    network.reset_thresholds(-1.0, +1.0);
-
-    // Debug plotting
-    //plot_input_data(training_data, validation_data);
-    //plot_network_separation_line(network);
-
-    // Test result data
+    // Test result data (we only need to store results for the last test for this)
     std::vector<double> test_iter_vec;               test_iter_vec.resize(NUM_TRAINING_ITERATIONS);
     std::vector<double> test_training_energy_vec;    test_training_energy_vec.resize(NUM_TRAINING_ITERATIONS);
     std::vector<double> test_validation_energy_vec;  test_validation_energy_vec.resize(NUM_TRAINING_ITERATIONS);
 
-    // Test procedure
-    for (size_t training_iteration = 0; training_iteration < NUM_TRAINING_ITERATIONS; ++training_iteration) {
+    std::vector<double> classification_errors_training;    classification_errors_training.resize(NUM_TESTS);
+    std::vector<double> classification_errors_validation;  classification_errors_validation.resize(NUM_TESTS);
 
-        if (training_iteration % (NUM_TRAINING_ITERATIONS / 100) == 0) {
-            std::cout << "\rTraining... " << (100.0 * training_iteration / NUM_TRAINING_ITERATIONS) << " %" << std::flush;
+    std::shared_ptr<NeuralNetwork> network;
+    for (size_t test = 0; test < NUM_TESTS; ++test) {
+
+        std::cout << "Performing test " << (test + 1) << "/" << NUM_TESTS << std::endl;
+
+        // Set up neural network
+        network = std::make_shared<NeuralNetwork>(2, 1, tanh_activation_function, tanh_activation_function_derivative);
+        network->reset_weights(-0.2, +0.2);
+        network->reset_thresholds(-1.0, +1.0);
+
+        // Debug plotting (to see if there has been any change)
+        //plot_input_data(training_data, validation_data);
+        //plot_network_separation_line(network);
+
+        for (size_t training_iteration = 0; training_iteration < NUM_TRAINING_ITERATIONS; ++training_iteration) {
+
+            if (training_iteration % (NUM_TRAINING_ITERATIONS / 100) == 0) {
+                std::cout << "\r  training... " << (100.0 * training_iteration / NUM_TRAINING_ITERATIONS) << " %" << std::flush;
+            }
+
+            // Train using a random pattern from the training data set
+            size_t i = std::rand() % training_data.size();
+            const Pattern& pattern = training_data[i];
+            network->train(
+                    {pattern.in_x, pattern.in_y},
+                    {pattern.out},
+                    LEARNING_RATE
+            );
+
+            double training_energy = energy_for_data_set(*network, training_data);
+            double validation_energy = energy_for_data_set(*network, validation_data);
+
+            // Store results for plotting
+            test_iter_vec[training_iteration] = training_iteration;
+            test_training_energy_vec[training_iteration] = training_energy;
+            test_validation_energy_vec[training_iteration] = validation_energy;
         }
+        std::cout << "\r  training... 100 %" << std::endl;
 
-        // Train using a random pattern from the training data set
-        size_t i = std::rand() % training_data.size();
-        const Pattern& pattern = training_data[i];
-        network.train(
-                {pattern.in_x, pattern.in_y},
-                {pattern.out},
-                learning_rate
-        );
-
-        double training_energy = energy_for_data_set(network, training_data);
-        double validation_energy = energy_for_data_set(network, validation_data);
-
-        // Store results for plotting
-        test_iter_vec[training_iteration] = training_iteration;
-        test_training_energy_vec[training_iteration] = training_energy;
-        test_validation_energy_vec[training_iteration] = validation_energy;
+        // Calculate classification errors
+        classification_errors_training[test] = classification_error_for_data_set(*network, training_data);
+        classification_errors_validation[test] = classification_error_for_data_set(*network, validation_data);
     }
-    std::cout << "\rTraining... 100 %, plotting" << std::endl;
 
-    // Plot results
+    // Report classification error data
+    {
+        double min_class_error_t = *std::min_element(classification_errors_training.begin(), classification_errors_training.end());
+        std::cout << "Minimum classification error (training set):   " << min_class_error_t << std::endl;
+        double min_class_error_v = *std::min_element(classification_errors_validation.begin(), classification_errors_validation.end());
+        std::cout << "Minimum classification error (validation set): " << min_class_error_v << std::endl;
+
+        double avg_class_error_t = average_value(classification_errors_training);
+        std::cout << "Average classification error (training set):   " << avg_class_error_t << std::endl;
+        double avg_class_error_v = average_value(classification_errors_validation);
+        std::cout << "Average classification error (validation set): " << avg_class_error_v << std::endl;
+
+        double var_class_error_t = variance_of_data(classification_errors_training, avg_class_error_t);
+        std::cout << "Variance of classification error (training set):   " << var_class_error_t << std::endl;
+        double var_class_error_v = variance_of_data(classification_errors_validation, avg_class_error_v);
+        std::cout << "Variance of classification error (validation set): " << var_class_error_v << std::endl;
+    }
+
+    // Plot results (only the results from the *last* test!)
+    std::cout << "Plotting" << std::endl;
     plt::figure();
     plt::subplot(1, 2, 1);
     {
@@ -266,9 +320,9 @@ main()
     }
     plt::subplot(1, 2, 2);
     {
-        plt::title("Data points (training and validation) and network separation \"line\"");
+        plt::title("Input data points (training and validation) and network-defined line classifying the data");
         plot_input_data(training_data, validation_data);
-        plot_network_separation_line(network);
+        plot_network_separation_line(*network);
         plt::legend();
         plt::grid(true);
     }

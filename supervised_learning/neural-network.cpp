@@ -1,5 +1,13 @@
 #include "neural-network.h"
 
+NeuralNetwork::NeuralNetwork()
+    : num_inputs(0)
+    , num_outputs(0)
+    , weights(0, 0)
+{
+    // Empty default constructor
+}
+
 NeuralNetwork::NeuralNetwork(size_t num_inputs, size_t num_outputs, ActivationFunction activation_function, ActivationFunction activation_function_derivative)
     : num_inputs(num_inputs)
     , num_outputs(num_outputs)
@@ -7,7 +15,6 @@ NeuralNetwork::NeuralNetwork(size_t num_inputs, size_t num_outputs, ActivationFu
     , activation_function_derivative(activation_function_derivative)
     , weights(num_inputs, num_outputs)
 {
-    //weights.resize(num_inputs);
     thresholds.resize(num_outputs);
     outputs.resize(num_outputs);
 }
@@ -113,4 +120,3 @@ NeuralNetwork::run(std::vector<double> input_data) const
 
     return outputs;
 }
-
