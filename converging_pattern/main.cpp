@@ -2,6 +2,9 @@
 
 #include "matrix.h"
 
+typedef Matrix<int> Pattern;
+typedef Matrix<double> WeightMatrix;
+
 float
 calculate_weight(const Pattern& pattern, size_t i, size_t j)
 {

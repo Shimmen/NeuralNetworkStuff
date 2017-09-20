@@ -8,6 +8,9 @@
 #include <matplotlib-cpp/matplotlibcpp.h>
 namespace plt = matplotlibcpp;
 
+typedef Matrix<int> Pattern;
+typedef Matrix<double> WeightMatrix;
+
 ///////////////////////////////////////////////
 // Pattern initialization
 

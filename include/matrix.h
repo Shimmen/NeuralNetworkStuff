@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <cassert>
+#include <iostream>
 #include <initializer_list>
 
 template<typename T>
@@ -37,8 +38,9 @@ private:
 
 ////////////////////////////
 
-typedef Matrix<int> Pattern;
-typedef Matrix<double> WeightMatrix;
+// Define these in the relevant files!
+//typedef Matrix<int> Pattern;
+//typedef Matrix<double> WeightMatrix;
 
 ////////////////////////////
 ////// Implementation //////
