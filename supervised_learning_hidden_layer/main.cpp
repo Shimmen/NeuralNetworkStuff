@@ -179,26 +179,28 @@ plot_input_data(const std::vector<Pattern>& training_data, const std::vector<Pat
 
     plt::named_plot("output = +1", pos_x, pos_y, "go");
     plt::named_plot("output = -1", neg_x, neg_y, "rx");
+    plt::xlabel("xi1");
+    plt::ylabel("xi2");
 }
 
 void
 plot_network_separation_lines(const NeuralNetwork &network)
 {
     // Assert the data is all right for plotting using two dimensions
-    assert(network.num_outputs == 1);
     assert(network.num_inputs == 2);
 
     const double LINE_LENGTH = 100.0;
 
-    double threshold = network.get_output_thresholds()[0];
+    for (size_t j = 0; j < network.num_hidden; ++j) {
 
-    const auto &weights = network.get_output_weights();
-    double weight_normal_x = weights.get(0, 0);
-    double weight_normal_y = weights.get(0, 1);
+        double threshold = network.get_hidden_thresholds()[j];
 
-    //std::cout << "W = " << weight_normal_x << ", " << weight_normal_y << ", thresh = " << threshold << "." << std::endl;
+        const auto& weights = network.get_hidden_weights();
+        double weight_normal_x = weights.get(j, 0);
+        double weight_normal_y = weights.get(j, 1);
 
-    {
+        //std::cout << "W" << j << " = " << weight_normal_x << ", " << weight_normal_y << ", thresh = " << threshold << "." << std::endl;
+
         double weight_line_x = weight_normal_y;
         double weight_line_y = -weight_normal_x;
 
@@ -257,7 +259,7 @@ main()
         std::cout << "Performing test " << (test + 1) << "/" << NUM_TESTS << std::endl;
 
         // Set up neural network
-        network = std::make_shared<NeuralNetwork>(2, 1, tanh_activation_function, tanh_activation_function_derivative);
+        network = std::make_shared<NeuralNetwork>(2, 4, 1, tanh_activation_function, tanh_activation_function_derivative);
         network->reset_weights(-0.2, +0.2);
         network->reset_thresholds(-1.0, +1.0);
 
@@ -277,7 +279,7 @@ main()
             network->train(
                     {pattern.in_x, pattern.in_y},
                     {pattern.out},
-                    LEARNING_RATE
+                    LEARNING_RATE * 2.0
             );
 
             if (training_iteration % ENERGY_EVERY_X_STEP == 0) {
@@ -326,7 +328,7 @@ main()
         plt::ylabel("Energy");
         plt::named_plot("Training set energy", test_iter_vec, test_training_energy_vec, "r-");
         plt::named_plot("Validation set energy", test_iter_vec, test_validation_energy_vec, "b-");
-        plt::ylim(90.0, 175.0);
+        plt::ylim(0.0, 165.0);
         plt::legend();
         plt::grid(true);
     }
@@ -341,7 +343,6 @@ main()
         plt::grid(true);
     }
     plt::show();
-
 
     return 0;
 }

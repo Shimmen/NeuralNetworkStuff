@@ -78,10 +78,8 @@ double random_double()
     return static_cast<double>(std::rand()) / static_cast<double>(RAND_MAX);
 }
 
-#define g_func(b, beta) activation_function_g(b, beta)
-
 double
-activation_function_g(double b, double beta)
+activation_function(double b, double beta)
 {
     return 1.0f / (1.0f + exp(-2.0f * b * beta));
 }
@@ -90,7 +88,7 @@ void
 stochastic_update_neuron(Pattern& pattern, size_t i, const WeightMatrix& weights, double beta)
 {
     double b = local_field(pattern, i, weights);
-    int new_value = random_double() <= g_func(b, beta) ? +1 : -1;
+    int new_value = random_double() <= activation_function(b, beta) ? +1 : -1;
     pattern.set_linear(i, new_value);
 }
 

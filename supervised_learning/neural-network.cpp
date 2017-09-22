@@ -3,7 +3,7 @@
 NeuralNetwork::NeuralNetwork()
     : num_inputs(0)
     , num_outputs(0)
-    , weights(0, 0)
+    , output_weights(0, 0)
 {
     // Empty default constructor
 }
@@ -13,52 +13,52 @@ NeuralNetwork::NeuralNetwork(size_t num_inputs, size_t num_outputs, ActivationFu
     , num_outputs(num_outputs)
     , activation_function(activation_function)
     , activation_function_derivative(activation_function_derivative)
-    , weights(num_inputs, num_outputs)
+    , output_weights(num_inputs, num_outputs)
 {
-    thresholds.resize(num_outputs);
-    outputs.resize(num_outputs);
+    output_thresholds.resize(num_outputs);
+    output_data.resize(num_outputs);
 }
 
 const Matrix<double>&
-NeuralNetwork::get_weights() const
+NeuralNetwork::get_output_weights() const
 {
-    return weights;
+    return output_weights;
 }
 
 const std::vector<double>&
-NeuralNetwork::get_thresholds() const
+NeuralNetwork::get_output_thresholds() const
 {
-    return thresholds;
+    return output_thresholds;
 }
 
 void
 NeuralNetwork::reset_weights(double min, double max)
 {
-    for (size_t i = 0; i < weights.num_elements; ++i) {
-        weights.set_linear(i, random_double_in_range(min, max));
+    for (size_t i = 0; i < output_weights.num_elements; ++i) {
+        output_weights.set_linear(i, random_double_in_range(min, max));
     }
 }
 
 void
 NeuralNetwork::reset_thresholds(double min, double max)
 {
-    for (size_t i = 0; i < thresholds.size(); ++i) {
-        thresholds[i] = random_double_in_range(min, max);
+    for (size_t i = 0; i < output_thresholds.size(); ++i) {
+        output_thresholds[i] = random_double_in_range(min, max);
     }
 }
 
 double
-NeuralNetwork::calculate_local_field(size_t i, const std::vector<double>& input_data) const
+NeuralNetwork::calculate_b_i(size_t i, const std::vector<double> &input_data) const
 {
     double local_field = 0.0;
 
     // Apply weighted sum
     for (size_t j = 0; j < num_inputs; ++j) {
-        local_field += weights.get(i, j) * input_data[j];
+        local_field += output_weights.get(i, j) * input_data[j];
     }
 
     // Apply threshold
-    local_field -= thresholds[i];
+    local_field -= output_thresholds[i];
 
     return local_field;
 }
@@ -84,8 +84,8 @@ NeuralNetwork::train(const std::initializer_list<double>& training_input, const 
 
     for (size_t i = 0; i < num_outputs; ++i) {
 
-        double local_field = calculate_local_field(i, training_input);
-        double error = (expected_out[i] - outputs[i]) * activation_function_derivative(local_field);
+        double local_field = calculate_b_i(i, training_input);
+        double error = (expected_out[i] - output_data[i]) * activation_function_derivative(local_field);
 
         // Calculate delta weights
         for (size_t j = 0; j < num_inputs; ++j) {
@@ -94,17 +94,17 @@ NeuralNetwork::train(const std::initializer_list<double>& training_input, const 
         }
 
         // Calculate delta thresholds
-        double delta_threshold = -learning_rate * (expected_out[i] - thresholds[i]) * -activation_function_derivative(local_field);
+        double delta_threshold = learning_rate * (expected_out[i] - output_data[i]) * -activation_function_derivative(local_field);
         delta_thresholds[i] = delta_threshold;
     }
 
     // Apply deltas
     for (size_t i = 0; i < num_outputs; ++i) {
         for (size_t j = 0; j < num_inputs; ++j) {
-            double new_wij = weights.get(i, j) + delta_weights.get(i, j);
-            weights.set(i, j, new_wij);
+            double new_wij = output_weights.get(i, j) + delta_weights.get(i, j);
+            output_weights.set(i, j, new_wij);
         }
-        thresholds[i] += delta_thresholds[i];
+        output_thresholds[i] += delta_thresholds[i];
     }
 }
 
@@ -114,9 +114,9 @@ NeuralNetwork::run(std::vector<double> input_data) const
     assert(input_data.size() == num_inputs);
     for (size_t i = 0; i < num_outputs; ++i) {
 
-        double local_field = calculate_local_field(i, input_data);
-        outputs[i] = activation_function(local_field);
+        double local_field = calculate_b_i(i, input_data);
+        output_data[i] = activation_function(local_field);
     }
 
-    return outputs;
+    return output_data;
 }
