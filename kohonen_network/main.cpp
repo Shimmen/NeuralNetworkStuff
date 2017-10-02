@@ -92,6 +92,7 @@ main()
     clock_t start_time = std::clock();
 
     std::default_random_engine rng;
+    rng.seed(static_cast<unsigned int>(start_time));
 
     const size_t TRAINING_DATA_SIZE = 1000;
     const size_t ORDERING_PHASE_STEPS = 1000;
@@ -170,8 +171,8 @@ main()
     plt::ylim(-0.1, 1.25);
 
     clock_t end_time = std::clock();
-    double time_elaped_s = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
-    std::cout << "Time elapsed: " << time_elaped_s << " s" << std::endl;
+    double time_elapsed_s = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
+    std::cout << "Time elapsed: " << time_elapsed_s << " s" << std::endl;
 
     // Blocks, so perform timing before this call
     plt::show();
