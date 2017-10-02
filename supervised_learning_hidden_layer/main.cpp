@@ -279,7 +279,7 @@ main()
             network->train(
                     {pattern.in_x, pattern.in_y},
                     {pattern.out},
-                    LEARNING_RATE * 2.0
+                    LEARNING_RATE
             );
 
             if (training_iteration % ENERGY_EVERY_X_STEP == 0) {
