@@ -8,6 +8,7 @@ add_subdirectory(stochastic_hopfield_model)
 add_subdirectory(supervised_learning)
 add_subdirectory(supervised_learning_hidden_layer)
 add_subdirectory(kohonen_network)
+add_subdirectory(oja_unsupervised)
 
 # Etc. stuff
 add_subdirectory(plot_test)
