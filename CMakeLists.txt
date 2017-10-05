@@ -9,6 +9,7 @@ add_subdirectory(supervised_learning)
 add_subdirectory(supervised_learning_hidden_layer)
 add_subdirectory(kohonen_network)
 add_subdirectory(oja_unsupervised)
+add_subdirectory(combined_networks)
 
 # Etc. stuff
 add_subdirectory(plot_test)
