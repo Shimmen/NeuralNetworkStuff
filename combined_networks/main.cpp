@@ -276,13 +276,10 @@ train_network(FullNetwork& network, const std::vector<Pattern>& training_data, s
 
     std::uniform_int_distribution<size_t> random_training_data_sample_index(0, training_data.size() - 1);
 
-    //FullNetwork network(K);
-
     //
     // Phase 1: unsupervised learning
     //
 
-    //Matrix<double> unsupervised_weights(2, K);
     reset_weights(network.unsupervised_weights, rng);
 
     for (size_t step = 0; step < UNSUPERVISED_TRAINING_STEPS; ++step) {
@@ -347,7 +344,7 @@ main()
         std::cout << "  Training ..." << std::endl;
 
         const size_t NUM_TEST_RUNS = 20;
-        const size_t K = 4;// K = 10 for 3b!
+        const size_t K = 10;// K = 10 for 3b!
 
         std::vector<double> class_errors(NUM_TEST_RUNS);
         double lowest_class_error = std::numeric_limits<double>::infinity();
