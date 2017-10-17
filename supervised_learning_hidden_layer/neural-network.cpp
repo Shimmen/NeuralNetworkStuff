@@ -130,7 +130,7 @@ NeuralNetwork::train(const std::initializer_list<double>& training_input, const 
         }
 
         // Calculate delta output thresholds
-        double delta_threshold = learning_rate * (expected_out[i] - output_data[i]) * -activation_function_derivative(b_i);
+        double delta_threshold = -learning_rate * error_i;
         delta_output_thresholds[i] = delta_threshold;
     }
 
